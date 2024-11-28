@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>お問い合わせフォームを作ろう</title>
+</head>
+
+<body>
+    <h2>入力内容をご確認ください。</h2>
+
+	<table border="1">
+        <thead>
+            <tr>
+                <th>項目</th>
+                <th>入力内容</th>
+            </tr>
+            <tr>
+                <td>お名前</td>
+                <td th:text="${contactForm.getName()}"></td>
+            </tr>
+            <tr>
+                <td>メールアドレス</td>
+                <td th:text="${contactForm.getMail()}"></td>
+            </tr>
+            <tr>
+                <td>お問い合わせ内容</td>
+                <td th:text="${contactForm.getToi()}"></td>
+            </tr>
+        </thead>
+        
+    </table>
+</body>
+</html>
