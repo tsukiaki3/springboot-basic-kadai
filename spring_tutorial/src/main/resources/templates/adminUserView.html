@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!--spring securityの使用宣言-->
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Spring Bootの基礎を学ぼう</title>
+</head>
+
+<body>
+	<!--ログイン・ログアウトのメッセージ表示。URLに?loggedInがあれば「ログインしました。」、?loggedOutがあれば「ログアウトしました。」と表示-->
+	<div th:if="${param.loggedIn}" style="color: green;">ログインしました。</div>
+    <div th:if="${param.loggedOut}">ログアウトしました。</div>
+
+	<!--ログインユーザー情報表示-->
+	<!--sec:authorize="メソッド名()" isAuthenticated()はログイン済みなら表示の意味-->
+     <p sec:authorize="isAuthenticated()">
+		 
+		 <!--sec:authentication="認証情報" isAuthenticated()はログイン済みなら表示の意味-->
+         ログインユーザー：<span sec:authentication="principal.username"></span><br>
+    	ロール：<span sec:authentication="principal.authorities"></span>
+     </p>
+     
+    <!--ロールにもとづくフォーム切り替え-->
+   <div sec:authorize="hasRole('ADMIN')"> 
+    <h2>ユーザー登録フォーム</h2>
+
+	<!--フォームクラスを使った書き方-->
+	<!--フォームクラスとフォームの領域を紐づけ(th:object)-->
+	<form th:action="@{/register}" method="post" th:object="${userRegisterForm}">
+		<label for="userName">ユーザー名：</label>
+		 <!--フォームクラスのフィールドと紐づけ。th:field属性を設定すると、id属性・name属性・value属性を省略-->
+         <input type="text" th:field="*{userName}"><br>
+         
+         <!--バリデーションのエラー-->
+         <div th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" style="color: red;"></div>
+         
+         <label for="password">パスワード：</label>
+         <!--フォームクラスのフィールドと紐づけ-->
+         <input type="password" th:field="*{password}"><br>
+         
+         <!--バリデーションのエラー-->
+          <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></div>
+         
+         <label for="roleId">ロール：</label>
+         <!--フォームクラスのフィールドと紐づけ-->
+         <select th:field="*{roleId}">
+             <option value="1">一般ユーザー</option>
+             <option value="2">管理者ユーザー</option>
+         </select>
+         
+         <!--バリデーションのエラー-->
+         <div th:if="${#fields.hasErrors('roleId')}" th:errors="*{roleId}" style="color: red;"></div>
+         <button type="submit">登録</button>
+	</form>
+   </div>
+	
+	<!--成功メッセージ・失敗メッセージがあれば表示--> 
+    <p th:if="${successMessage}" th:text="${successMessage}" style="color: green;"></p>
+    <p th:if="${failureMessage}" th:text="${failureMessage}" style="color: red;"></p>
+
+    <h2>ユーザーリスト</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ユーザー名</th>
+                <th>ロール</th>
+            </tr>
+        </thead>
+        <tbody>
+			
+			<!--ユーザーリストの取得-->
+			<!--コントローラで渡したusersという名前を使い表示させる-->
+            <tr th:each="user : ${users}">
+                <td th:text="${user.getUserId()}"></td>
+                <td th:text="${user.getUserName()}"></td>
+                <td>
+                    <span th:if="${user.getRoleId() == 1}">一般ユーザー</span>
+                    <span th:if="${user.getRoleId() == 2}">管理者ユーザー</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+
+<!--    送信先-->
+<!--    <form th:action="@{/register}" method="post">-->
+<!--        <label for="user_name">ユーザー名：</label>-->
+        
+<!--        th:value属性によるテキストボックスの初期値設定-->
+<!--        <input type="text" id="user_name" name="user_name" th:value="${userName}"><br>-->
+
+<!--        <label for="password">パスワード：</label>-->
+<!--        <input type="password" id="password" name="password"><br>-->
+
+<!--        <label for="role_id">ロール：</label>-->
+<!--        <select id="role_id" name="role_id">-->
+			
+<!--			th:selected属性によるセレクトボックスの初期値設定-->
+<!--            <option value="1" th:selected="${roleId == 1}">一般ユーザー</option>-->
+<!--            <option value="2" th:selected="${roleId == 2}">管理者ユーザー</option>-->
+<!--        </select>-->
+<!--        <button type="submit">登録</button>-->
+<!--    </form>-->
+
+     
